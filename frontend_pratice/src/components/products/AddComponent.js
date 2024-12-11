@@ -1,5 +1,8 @@
 import React, { Component, useRef, useState } from 'react';
-import { postAdd } from '../../api/products';
+import { postAdd } from '../../api/productsApi';
+import FetchingModal from '../common/FetchingModal';
+import ResultModal from '../common/ResultModal';
+import useCustomMove from '../../hooks/useCustomMove';
 
 const initState = {
     pname: '',
@@ -10,6 +13,10 @@ const initState = {
 
 function AddComponent(props) {
     const [product, setProduct] = useState(initState);
+    const [fetching, setFetching] = useState(false)
+    const [result,setResult]=useState(false)
+    const {moveToList} = useCustomMove();
+
 
     const uploadRef = useRef()
 
@@ -23,21 +30,31 @@ function AddComponent(props) {
 
         const formData = new FormData();
 
-        const files=uploadRef.current.files
+        const files = uploadRef.current.files
         console.log(files.length)
 
-        for(let i=0; i<files.length;i++){
-            formData.append("files",files[i]);
+        for (let i = 0; i < files.length; i++) {
+            formData.append("files", files[i]);
         }
-        formData.append("pname",product.pname);
-        formData.append("pdesc",product.pdesc);
-        formData.append("price",product.price);
+        formData.append("pname", product.pname);
+        formData.append("pdesc", product.pdesc);
+        formData.append("price", product.price);
 
         console.log(formData);
 
-        postAdd(formData)
+        setFetching(true);
 
+        postAdd(formData).then(data => {
+            setFetching(false);
+            setResult(data.result);
+        })
     }
+
+    const closeModal=()=>{
+        setResult(null);
+        moveToList({page:1})
+    }
+
 
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
@@ -86,6 +103,9 @@ function AddComponent(props) {
                     </button>
                 </div>
             </div>
+
+            {fetching?<FetchingModal></FetchingModal>:<></>}
+            {result?<ResultModal callbackFn={closeModal} title={'Product Add Result'} content={`${result}번 상품 등록 완료`}></ResultModal>:<></>}
         </div>
     );
 }

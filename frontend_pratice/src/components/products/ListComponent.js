@@ -1,27 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import useCustomMove from '../../hooks/useCustomMove';
-import { getList } from '../../api/productsApi';
-import FetchingModal from '../common/FetchingModal';
-import { API_SERVER_HOST } from '../../api/todoApi';
-import PageComponent from '../common/PageComponent';
+import { useEffect, useState } from "react";
+import { getList } from "../../api/productsApi";
+import useCustomMove from "../../hooks/useCustomMove";
+import FetchingModal from "../common/FetchingModal";
+import { API_SERVER_HOST } from "../../api/todoApi";
+import PageComponent from "../common/PageComponent";
+import useCustomLogin from "../../hooks/useCustomLogin";
 
 const initState = {
-    dtoList: [],
-    pageNumList: [],
-    pageRequestDTO: null,
-    prev: false,
-    next: false,
-    totalCount: 0,
-    prevPage: 0,
-    nextPage: 0,
-    totalPage: 0,
-    current: 0
+dtoList:[], pageNumList:[],
+pageRequestDTO: null,
+prev: false, next: false,
+totoalCount: 0,
+prevPage: 0,
+nextPage: 0,
+totalPage: 0,
+current: 0
 }
 
 const host = API_SERVER_HOST
 
-function ListComponent(props) {
-
+function ListComponent() {
+    const {exceptionHandle}=useCustomLogin();
     const { moveToList, moveToRead, page, size, refresh } = useCustomMove();
     const [serverData, setServerData] = useState(initState);
     const [fetching, setFetching] = useState(false);
@@ -31,7 +30,7 @@ function ListComponent(props) {
         getList({ page, size }).then(data => {
             setFetching(false);
             setServerData(data);
-        })
+        }).catch(err => exceptionHandle(err))
     }, [page, size, refresh])
 
     return (

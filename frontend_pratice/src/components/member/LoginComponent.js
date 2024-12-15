@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import { login, loginPostAsync } from '../../slices/loginSlice'
 import { useNavigate } from 'react-router-dom'
 import useCustomLogin from '../../hooks/useCustomLogin'
+import KakaoComponent from './KakaoComponent'
 
 const initState = {
     email: '',
@@ -16,18 +17,19 @@ function LoginComponent(props) {
 
 
     const handleChange = (e) => {
+        console.log(e.target.name+" ="+e.target.value)
         loginParam[e.target.name] = e.target.value;
         setLoginParam({ ...loginParam })
     }
 
-    const handleClickLogin = (e) => {
-      doLogin(loginParam).then(data=>{
-        if(data.error){
-            alert("이메일과 패스워드를 확인해주세요.")
-        }else{
-            moveToPath("/")
-        }
-      })
+    const handleClickLogin = () => {
+        doLogin(loginParam).then(data => {
+            if (data.error) {
+                alert("이메일과 패스워드를 확인해주세요.")
+            } else {
+                moveToPath("/")
+            }
+        })
     }
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
@@ -61,10 +63,13 @@ function LoginComponent(props) {
             <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full justify-center">
                     <div className="w-2/5 p-6 flex justify-center font-bold">
-                        <button className="rounded p-4 w-36 bg-blue-500 text-xl text-white" onClick={(e) => handleClickLogin(e)}>
+                        <button className="rounded p-4 w-36 bg-blue-500 text-xl text-white" onClick={() => handleClickLogin(loginParam)}>
                             LOGIN
                         </button>
                     </div>
+                </div>
+                <div className="relative mb-4 flex w-full justify-center">
+                    <KakaoComponent></KakaoComponent>
                 </div>
             </div>
         </div>
